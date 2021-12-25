@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/jorgenkg/nodejs-yale-doorman/compare/v2.0.0...v3.0.0) (2021-12-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removes SDK response objects from lockDoor() and unlockDoor().
+This change also introduce parsing of lock/unlock command success status from the
+Yale API response body. The lock methods throw if the returned status code is not equal
+to the success code "000".
+
+### Bug Fixes
+
+* parse api success code from response body ([95d90e6](https://github.com/jorgenkg/nodejs-yale-doorman/commit/95d90e6045a7a7eb7b296da255bbb3f452e233a7))
+
 ## [2.0.0](https://github.com/jorgenkg/nodejs-yale-doorman/compare/v1.1.0...v2.0.0) (2021-12-25)
 
 

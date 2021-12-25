@@ -91,24 +91,35 @@ class MockedYaleApi extends Koa {
           const body = ctx.request.body as Partial<{
           username: string;
           password: string;
+          refresh_token: string;
           grant_type: string;
         }>;
 
-          if(body.grant_type !== "password") {
+          if(body.grant_type === "password") {
+            if(body.password !== password) {
+              ctx.response.status = 400;
+              ctx.response.body = { message: "The request did not present a valid password" };
+              return;
+            }
+            else if(body.username !== userID) {
+              ctx.response.status = 400;
+              ctx.response.body = { message: "The request did not present a valid userID" };
+              return;
+            }
+          }
+          else if(body.grant_type === "refresh_token") {
+            if(body.refresh_token !== this.mockRefreshToken) {
+              ctx.response.status = 400;
+              ctx.response.body = { message: "The request did not present a valid refresh_token" };
+              return;
+            }
+          }
+          else {
             ctx.response.status = 400;
             ctx.response.body = { message: "The request did not present a valid grant_type" };
             return;
           }
-          if(body.password !== password) {
-            ctx.response.status = 400;
-            ctx.response.body = { message: "The request did not present a valid password" };
-            return;
-          }
-          else if(body.username !== userID) {
-            ctx.response.status = 400;
-            ctx.response.body = { message: "The request did not present a valid userID" };
-            return;
-          }
+
 
           this.generateNewBearerToken();
 
@@ -117,7 +128,7 @@ class MockedYaleApi extends Koa {
             "access_token": this.mockBearerToken,
             "token_type": "Bearer",
             /** Appears to be seconds */
-            "expires_in": Math.floor((config.clock.Date.now() - (this.tokenExpiresAt?.valueOf() ?? assert.fail("Expect expiry to be defined"))) / 1000),
+            "expires_in": Math.floor(((this.tokenExpiresAt?.valueOf() ?? assert.fail("Expect expiry to be defined")) - config.clock.Date.now()) / 1000),
             "scope": "read basic_profile google_profile write groups",
             "refresh_token": this.mockRefreshToken,
           };

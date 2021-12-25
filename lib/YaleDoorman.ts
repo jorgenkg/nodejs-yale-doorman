@@ -19,6 +19,7 @@ import type { Options } from "got";
  */
 export class YaleDoorman<Test extends boolean = false> {
   #accessToken?: string;
+  #refreshToken?: string;
   #accessTokenExpiresAt?: Date;
 
   #configuration: Configuration<Test>;
@@ -66,6 +67,8 @@ export class YaleDoorman<Test extends boolean = false> {
       }
     );
 
+    this.#configuration.logger.debug(`Request ${method} ${endpoints[endpoint]} -> HTTP${response.statusCode}`);
+
     if(response.statusCode === 401 && !isRetry) {
       return await this.httpRequest({
         endpoint, method, form, isRetry: true, query
@@ -81,11 +84,62 @@ export class YaleDoorman<Test extends boolean = false> {
     return response.body;
   }
 
+  /** Returns a boolean indicating success */
+  private async loginWithRefreshToken(): Promise<boolean> {
+    if(!this.#refreshToken) {
+      return false;
+    }
+
+    const { yale: { host, endpoints: { token } } } = this.#configuration;
+
+    // Perform the actual login
+    const response = await got<{
+        "access_token": string,
+        "token_type": "Bearer",
+        /** Appears to be seconds */
+        "expires_in": number,
+        "scope": "read basic_profile google_profile write groups",
+        "refresh_token": string
+      }>(
+        new URL(token, host),
+        {
+          method: "POST",
+          resolveBodyOnly: false,
+          throwHttpErrors: false,
+          headers: { authorization: this.#accessToken },
+          form: {
+            grant_type: "refresh_token",
+            refresh_token: this.#refreshToken
+          },
+          responseType: "json",
+          retry: { limit: 3 }
+        }
+      );
+
+    if(response.statusCode < 300) {
+      this.#accessToken = response.body.access_token;
+      this.#accessTokenExpiresAt = new Date(response.body.expires_in * 1000);
+      this.#refreshToken = response.body.refresh_token;
+      this.#configuration.logger.info("Successfully authenticated with Yale API using refresh token");
+
+      return true;
+    }
+
+    this.#configuration.logger.debug("Failed to authenticate with using refresh token");
+
+    return false;
+
+  }
+
   /** Authenticate using the credentials specified in the constructor.
    *
    * This function is used internally and does not need to be called directly.
   */
   public async login(): Promise<void> {
+    if(await this.loginWithRefreshToken()) {
+      return;
+    }
+
     const { yale: { host, endpoints: { token } } } = this.#configuration;
 
     // Perform the actual login
@@ -122,7 +176,8 @@ export class YaleDoorman<Test extends boolean = false> {
 
     this.#accessToken = response.body.access_token;
     this.#accessTokenExpiresAt = new Date(response.body.expires_in * 1000);
-    this.#configuration.logger.info("Successfully authenticated with Yale API");
+    this.#refreshToken = response.body.refresh_token;
+    this.#configuration.logger.info("Successfully authenticated with Yale API using credentials");
   }
 
   /** Fetch a list of devices connected to the Yale hub. */

@@ -1,14 +1,14 @@
-import { LockStates } from "./LockState";
+import { LockState } from "./LockState";
 
 export const LockStateCode = {
   /** Locked after a failed lock */
-  "1816": LockStates.LOCK,
+  "1816": LockState.LOCK,
   /** Failed to lock */
-  "1815": LockStates.UNLOCK,
+  "1815": LockState.UNLOCK,
   /** Auto-relocked */
-  "1807": LockStates.LOCK,
+  "1807": LockState.LOCK,
   /** Unlock from inside */
-  "1801": LockStates.UNLOCK,
+  "1801": LockState.UNLOCK,
   /** Unlock from outside, token or keypad, */
-  "1802": LockStates.UNLOCK,
+  "1802": LockState.UNLOCK,
 };

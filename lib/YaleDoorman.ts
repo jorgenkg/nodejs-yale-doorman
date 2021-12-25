@@ -1,5 +1,6 @@
 import { deepMerge } from "./misc/deepMerge.js";
 import { default as DefaultConfiguration } from "./config/default.js";
+import { LockState } from "../index.js";
 import { URL } from "url";
 import assert from "assert";
 import got from "got";
@@ -106,7 +107,8 @@ export class YaleDoorman<Test extends boolean = false> {
           method: "POST",
           resolveBodyOnly: false,
           throwHttpErrors: false,
-          headers: { authorization: this.#accessToken },
+          username: this.#configuration.yale.clientId,
+          password: this.#configuration.yale.clientSecret,
           form: {
             grant_type: "refresh_token",
             refresh_token: this.#refreshToken
@@ -156,7 +158,8 @@ export class YaleDoorman<Test extends boolean = false> {
         method: "POST",
         resolveBodyOnly: false,
         throwHttpErrors: false,
-        headers: { authorization: this.#accessToken },
+        username: this.#configuration.yale.clientId,
+        password: this.#configuration.yale.clientSecret,
         form: {
           grant_type: "password",
           username: this.#email,
@@ -183,6 +186,24 @@ export class YaleDoorman<Test extends boolean = false> {
   /** Fetch a list of devices connected to the Yale hub. */
   public async getDevices(): Promise<GetDeviceList> {
     return this.httpRequest<GetDeviceList>({ endpoint: "getDevices" });
+  }
+
+  /** Convenience method to filter the set of Yale devices down the only doors. Only returns the metadata required for changing door states. */
+  public async getDoors(): Promise<{ name: string; zone: Zone; area: Area; address: RfAddress; state?: LockState; }[]> {
+    const devices = await this.httpRequest<GetDeviceList>({ endpoint: "getDevices" });
+    const doors = devices.data
+      .filter(device => device.type === "device_type.door_lock")
+      .map(({
+        address, area, no, name, status_open
+      }) => ({
+        name,
+        zone: no,
+        area,
+        address,
+        state: status_open?.[0]
+      }));
+
+    return doors;
   }
 
   /** Fetch events from the Yale hub. */

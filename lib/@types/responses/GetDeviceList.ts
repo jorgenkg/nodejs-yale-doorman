@@ -1,4 +1,4 @@
-import type { LockStates } from "../../misc/LockState.js";
+import type { LockState } from "../../misc/LockState.js";
 
 export type Zone = string & {_never: never};
 export type Area = string & {_never: never};
@@ -16,7 +16,7 @@ export type GetDeviceList = {
     address: RfAddress;
     type: string;
     name: string;
-    status1: LockStates;
+    status1: LockState;
     status2: null;
     status_switch: null;
     status_power: null;
@@ -62,7 +62,7 @@ export type GetDeviceList = {
     type_no: string;
     device_group: string;
     status_fault: any[];
-    status_open: LockStates[];
+    status_open: Array<LockState>;
     trigger_by_zone: any[];
   }>;
   time: string;

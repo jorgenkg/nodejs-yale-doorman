@@ -89,11 +89,17 @@ class MockedYaleApi extends Koa {
       Route.post(
         this.configuration.yale.endpoints.token, ctx => {
           const body = ctx.request.body as Partial<{
-          username: string;
-          password: string;
-          refresh_token: string;
-          grant_type: string;
-        }>;
+            username: string;
+            password: string;
+            refresh_token: string;
+            grant_type: string;
+          }>;
+
+          if(ctx.request.headers.authorization !== `Basic ${Buffer.from(`${config.yale.clientId}:${config.yale.clientSecret}`).toString("base64")}`) {
+            ctx.response.status = 400;
+            ctx.response.body = { message: "The request did not present valid client credentials" };
+            return;
+          }
 
           if(body.grant_type === "password") {
             if(body.password !== password) {

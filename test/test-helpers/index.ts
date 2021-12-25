@@ -1,5 +1,5 @@
 import { default as debug } from "debug";
-import { LockStates } from "../../lib/misc/LockState";
+import { LockState } from "../../lib/misc/LockState";
 import type { Area, RfAddress, Zone } from "../../lib/@types/responses/GetDeviceList";
 import type { Configuration } from "../../lib/@types/Configuration";
 
@@ -14,6 +14,8 @@ export const defaults: Configuration<true> = {
   yale: {
     host: "http://localhost:8080/",
     port: 8080,
+    clientId: "foo",
+    clientSecret: "bar",
     endpoints: {
       token: "/yapi/o/token/", // post credentials
       getDevices: "/yapi/api/panel/device_status/",
@@ -46,6 +48,6 @@ export const defaults: Configuration<true> = {
     zone: "1" as Zone,
     device_sid: "RF:123456789" as RfAddress,
     pincode: "1234",
-    lockState: LockStates.LOCK
+    lockState: LockState.LOCK
   }
 };

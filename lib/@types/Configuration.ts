@@ -1,4 +1,4 @@
-import { LockStates } from "../misc/LockState";
+import { LockState } from "../misc/LockState";
 import type { Area, RfAddress, Zone } from "./responses/GetDeviceList";
 
 export interface Configuration<Test extends boolean = false> {
@@ -6,6 +6,8 @@ export interface Configuration<Test extends boolean = false> {
     host: string;
     /** `port` shall only be defined in tests */
     port?: number;
+    clientId: string;
+    clientSecret: string;
     endpoints: {
       token: string;
       getDevices: string;
@@ -35,6 +37,6 @@ export interface Configuration<Test extends boolean = false> {
     zone: Zone;
     device_sid: RfAddress;
     pincode: string;
-    lockState: LockStates;
+    lockState: LockState;
   };
 }

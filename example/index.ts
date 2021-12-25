@@ -8,9 +8,8 @@ import assert from "assert";
   const api = new YaleDoorman(process.env.EMAIL, process.env.PASSWORD);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const deviceResponse = await api.getDevices();
+  const [door] = await api.getDoors();
 
-  const [door] = deviceResponse.data;
-  await api.lockDoor(door.no, door.area, door.address);
+  await api.lockDoor(door.zone, door.area, door.address);
 })()
   .catch(console.error);

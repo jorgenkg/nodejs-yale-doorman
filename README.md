@@ -29,7 +29,7 @@ import { YaleDoorman } from "yale-doorman";
 const api = new YaleDoorman(email, password);
 // Fetch a list of devices from Yale Hub
 const [devices] = await api.getDevices();
-const [door] = deviceResponse.data;
+const door = deviceResponse.data.find(device => device.type === "device_type.door_lock");
 // Lock the door
   await api.lockDoor(door.no, door.area, door.address);
 ```

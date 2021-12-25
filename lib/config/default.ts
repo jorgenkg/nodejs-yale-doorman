@@ -4,6 +4,8 @@ import type { Configuration } from "../@types/Configuration";
 export default {
   yale: {
     host: "https://mob.yalehomesystem.co.uk",
+    clientId: "VuVX6XV9WICsTraqEiuSBPppgvOjLTyslEMKPpcu",
+    clientSecret: "dwtOlMyXKD5ByemFXutjnyxhksE7WFEcjttW29tZIcnXyRXqlYPDgPRdMqs1xGupU9qkZ8PNnliPjv9ghAdQm0zl3HxWweKFApfsjJLqmF2mGGYWFZZwMLFL70dtncgu",
     endpoints: {
       token: "/yapi/o/token/", // post credentials
       getDevices: "/yapi/api/panel/device_status/",

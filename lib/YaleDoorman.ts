@@ -213,8 +213,8 @@ export class YaleDoorman<Test extends boolean = false> {
 
   /** Locks a specific door. This request tends to take ~10 sec.
   The Zone, Area and RfAddress arguments may be retrieved using the getDevices() method. */
-  public async lockDoor(zone: Zone, area: Area, rfAddress: RfAddress): Promise<Lock> {
-    return this.httpRequest<Lock>({
+  public async lockDoor(zone: Zone, area: Area, rfAddress: RfAddress): Promise<void> {
+    const response = await this.httpRequest<Lock>({
       endpoint: "lockDoor",
       method: "POST",
       form: {
@@ -225,12 +225,16 @@ export class YaleDoorman<Test extends boolean = false> {
         request_value: "1"
       }
     });
+
+    if(response.code !== "000") {
+      throw new Error(`Failed to lock the door. Response code: ${response.code} Body: ${JSON.stringify(response)}`);
+    }
   }
 
   /** Unlocks a specific door. This request tends to take ~10 sec.
   The Zone and Area arguments may be retrieved using the getDevices() method. */
-  public async unlockDoor(zone: Zone, area: Area, pincode: string): Promise<Unlock> {
-    return this.httpRequest<Unlock>({
+  public async unlockDoor(zone: Zone, area: Area, pincode: string): Promise<void> {
+    const response = await this.httpRequest<Unlock>({
       endpoint: "unlockDoor",
       method: "POST",
       form: {
@@ -239,5 +243,12 @@ export class YaleDoorman<Test extends boolean = false> {
         pincode
       }
     });
+
+    if(response.code === "996") {
+      throw new Error(`Failed to unlock the door. The door pin might be incorrect. Response body: ${JSON.stringify(response)}`);
+    }
+    else if(response.code !== "000") {
+      throw new Error(`Failed to unlock the door. Response code: ${response.code} Body: ${JSON.stringify(response)}`);
+    }
   }
 }

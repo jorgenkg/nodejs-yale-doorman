@@ -24,7 +24,7 @@
     "got": "^11.8.2"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "16.0.0",
+    "@commitlint/config-conventional": "16.2.1",
     "@sinonjs/fake-timers": "8.1.0",
     "@types/debug": "4.1.7",
     "@types/koa": "2.13.4",
@@ -36,7 +36,7 @@
     "@typescript-eslint/eslint-plugin": "5.11.0",
     "@typescript-eslint/parser": "5.11.0",
     "changelog-parser": "2.8.0",
-    "commitlint": "16.1.0",
+    "commitlint": "16.2.1",
     "eslint": "8.9.0",
     "eslint-plugin-sort-imports-es6-autofix": "0.6.0",
     "husky": "7.0.4",

@@ -18,7 +18,7 @@ jobs:
         node-version: [10, 11, 12, 13, 14, 15, 16, 17]
     steps:
     - name: Check out repository code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
@@ -38,7 +38,7 @@ jobs:
         shell: bash
     steps:
     - name: Check out repository code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: Use Node.js
@@ -61,7 +61,7 @@ jobs:
         shell: bash
     steps:
     - name: Check out repository code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: Use Node.js
